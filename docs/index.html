@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playwright Automation – Project Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #f78166;
+      --accent4: #d2a8ff;
+      --accent5: #ffa657;
+      --text: #e6edf3;
+      --text2: #8b949e;
+      --text3: #c9d1d9;
+      --tag-blue: #0d419d;
+      --tag-green: #0f4429;
+      --tag-purple: #2e1065;
+      --tag-orange: #4a2900;
+      --sidebar-w: 280px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────── */
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      z-index: 100;
+      padding-bottom: 40px;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo h2 {
+      font-size: 15px; font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+    .sidebar-logo span {
+      font-size: 11px; color: var(--text2);
+      margin-top: 3px; display: block;
+    }
+
+    .sidebar-section { padding: 16px 0 8px; }
+    .sidebar-section-title {
+      font-size: 10px; font-weight: 600;
+      color: var(--text2); letter-spacing: 1.5px;
+      text-transform: uppercase; padding: 0 20px 8px;
+    }
+
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 20px;
+      font-size: 13px; color: var(--text3);
+      text-decoration: none; border-radius: 0;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: var(--bg3);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .sidebar-link .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── MAIN CONTENT ─────────────────────────────────── */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 100%;
+      padding: 0;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1f35 50%, #0d2137 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 64px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(88,166,255,0.1);
+      border: 1px solid rgba(88,166,255,0.25);
+      color: var(--accent);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 20px; letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: 36px; font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #e6edf3, #58a6ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 16px; color: var(--text2);
+      max-width: 620px; line-height: 1.8;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 36px;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 28px; font-weight: 700; color: var(--accent);
+    }
+    .stat-label {
+      font-size: 11px; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    /* Content sections */
+    .content { padding: 0 64px 80px; }
+
+    .section {
+      margin-top: 60px;
+      scroll-margin-top: 30px;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 22px; font-weight: 700; color: var(--text);
+    }
+    .section-header p {
+      font-size: 13px; color: var(--text2); margin-top: 3px;
+    }
+
+    /* File Card */
+    .file-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .file-card-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+    .file-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .file-card-header h3 {
+      font-size: 14px; font-weight: 600; color: var(--text);
+    }
+    .file-card-header span {
+      font-size: 12px; color: var(--text2); margin-left: auto;
+      font-family: 'Fira Code', monospace;
+    }
+    .file-card-body { padding: 20px; }
+
+    /* Code block */
+    pre {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 14px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .code-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      color: var(--text2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Keyword table */
+    .kw-table {
+      width: 100%; border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .kw-table th {
+      text-align: left; font-size: 11px;
+      color: var(--text2); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+    .kw-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(48,54,61,0.6);
+      font-size: 13.5px; color: var(--text3);
+      vertical-align: top;
+    }
+    .kw-table tr:last-child td { border-bottom: none; }
+    .kw-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .kw {
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .kw-blue  { background: rgba(88,166,255,0.12);  color: #79c0ff; }
+    .kw-green { background: rgba(63,185,80,0.12);   color: #56d364; }
+    .kw-purple{ background: rgba(210,168,255,0.12); color: #d2a8ff; }
+    .kw-orange{ background: rgba(255,166,87,0.12);  color: #ffa657; }
+    .kw-red   { background: rgba(247,129,102,0.12); color: #f78166; }
+
+    /* Info boxes */
+    .info-box {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 18px; border-radius: 8px;
+      margin: 14px 0; font-size: 13.5px;
+    }
+    .info-box.note   { background: rgba(88,166,255,0.07);  border-left: 3px solid var(--accent); }
+    .info-box.tip    { background: rgba(63,185,80,0.07);   border-left: 3px solid var(--accent2); }
+    .info-box.warn   { background: rgba(255,166,87,0.07);  border-left: 3px solid var(--accent5); }
+    .info-box-icon   { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .info-box p      { color: var(--text3); }
+    .info-box strong { color: var(--text); }
+
+    /* Interview Q&A */
+    .qa-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .qa-question {
+      padding: 14px 18px;
+      background: var(--bg3);
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      display: flex; align-items: flex-start; gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .qa-question::before {
+      content: 'Q';
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 11px; font-weight: 700;
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .qa-answer {
+      padding: 14px 18px 14px 48px;
+      font-size: 13.5px; color: var(--text3); line-height: 1.8;
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 9px; border-radius: 20px;
+      margin: 2px;
+    }
+    .tag-blue   { background: rgba(88,166,255,0.15);  color: var(--accent); }
+    .tag-green  { background: rgba(63,185,80,0.15);   color: var(--accent2); }
+    .tag-purple { background: rgba(210,168,255,0.15); color: var(--accent4); }
+    .tag-orange { background: rgba(255,166,87,0.15);  color: var(--accent5); }
+
+    /* Flow diagram */
+    .flow {
+      display: flex; align-items: center; gap: 0;
+      flex-wrap: wrap; margin: 20px 0; gap: 0;
+    }
+    .flow-step {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 13px; font-weight: 500; color: var(--text3);
+      text-align: center; min-width: 130px;
+    }
+    .flow-step span {
+      display: block; font-size: 11px;
+      color: var(--text2); margin-top: 3px;
+    }
+    .flow-arrow {
+      color: var(--text2); font-size: 20px;
+      padding: 0 10px;
+    }
+
+    /* Divider */
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* Top nav bar */
+    .topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 64px;
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .topbar-crumb {
+      font-size: 12px; color: var(--text2);
+    }
+    .topbar-crumb a { color: var(--accent); text-decoration: none; }
+    .topbar-crumb a:hover { text-decoration: underline; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #sidebar { display: none; }
+      #main { margin-left: 0; }
+      .hero, .content { padding-left: 24px; padding-right: 24px; }
+      .topbar { padding: 12px 24px; }
+    }
+
+    .highlight-line {
+      background: rgba(88,166,255,0.08);
+      display: block; margin: 0 -20px; padding: 0 20px;
+      border-left: 2px solid var(--accent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .mini-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .mini-card h4 {
+      font-size: 13px; font-weight: 600; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .mini-card p {
+      font-size: 13px; color: var(--text3); line-height: 1.7;
+    }
+
+    .step-list { list-style: none; counter-reset: steps; }
+    .step-list li {
+      counter-increment: steps;
+      display: flex; gap: 14px;
+      margin-bottom: 14px; align-items: flex-start;
+    }
+    .step-list li::before {
+      content: counter(steps);
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 12px; font-weight: 700;
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .step-list li p { font-size: 13.5px; color: var(--text3); }
+
+    .toc-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; color: var(--text3);
+      text-decoration: none; margin: 4px;
+      transition: all 0.2s;
+    }
+    .toc-pill:hover { border-color: var(--accent); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h2>🎭 Playwright Docs</h2>
+    <span>SersiAi Automation Testing</span>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Overview</div>
+    <a href="#project-overview" class="sidebar-link"><span class="dot" style="background:#58a6ff"></span>Project Overview</a>
+    <a href="#folder-structure" class="sidebar-link"><span class="dot" style="background:#58a6ff"></span>Folder Structure</a>
+    <a href="#architecture" class="sidebar-link"><span class="dot" style="background:#58a6ff"></span>Architecture (POM)</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Config Files</div>
+    <a href="#package-json" class="sidebar-link"><span class="dot" style="background:#ffa657"></span>package.json</a>
+    <a href="#playwright-config" class="sidebar-link"><span class="dot" style="background:#ffa657"></span>playwright.config.js</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Page Objects</div>
+    <a href="#login-page" class="sidebar-link"><span class="dot" style="background:#d2a8ff"></span>Pages/login.js</a>
+    <a href="#signup-page" class="sidebar-link"><span class="dot" style="background:#d2a8ff"></span>Pages/Signup.js</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Test Files</div>
+    <a href="#login-test" class="sidebar-link"><span class="dot" style="background:#3fb950"></span>tests/login.spec.js</a>
+    <a href="#signup-test" class="sidebar-link"><span class="dot" style="background:#3fb950"></span>tests/signupTest.spec.js</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Keywords</div>
+    <a href="#keywords-js" class="sidebar-link"><span class="dot" style="background:#f78166"></span>JavaScript Keywords</a>
+    <a href="#keywords-playwright" class="sidebar-link"><span class="dot" style="background:#f78166"></span>Playwright API</a>
+    <a href="#locator-strategies" class="sidebar-link"><span class="dot" style="background:#f78166"></span>Locator Strategies</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Reference</div>
+    <a href="#interview-qa" class="sidebar-link"><span class="dot" style="background:#56d364"></span>Q&amp;A Bank</a>
+    <a href="#commands" class="sidebar-link"><span class="dot" style="background:#56d364"></span>CLI Commands</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="topbar-crumb">
+      <a href="#">SersiAi_owner_Automation_Testing</a> /
+      <a href="#">docs</a> /
+      index.html
+    </span>
+  </div>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-badge">🎭 Playwright · JavaScript · Page Object Model</div>
+    <h1>Automation Testing<br/>Project Documentation</h1>
+    <p>
+      A complete, line-by-line explanation of every file, folder, keyword, and concept
+      used in this Playwright automation testing project.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label">Test Files</div></div>
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label">Page Objects</div></div>
+      <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Keywords Explained</div></div>
+      <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Q&amp;As</div></div>
+    </div>
+  </div>
+
+  <!-- ── CONTENT ── -->
+  <div class="content">
+
+    <!-- Quick nav pills -->
+    <div style="margin-top:40px; margin-bottom: 8px;">
+      <a href="#project-overview" class="toc-pill">📁 Overview</a>
+      <a href="#folder-structure" class="toc-pill">🗂️ Folders</a>
+      <a href="#architecture" class="toc-pill">🏛️ POM</a>
+      <a href="#playwright-config" class="toc-pill">⚙️ Config</a>
+      <a href="#login-page" class="toc-pill">🔐 Login</a>
+      <a href="#signup-page" class="toc-pill">✍️ Signup</a>
+      <a href="#keywords-playwright" class="toc-pill">📖 Keywords</a>
+      <a href="#interview-qa" class="toc-pill">🎯 Q&amp;A</a>
+    </div>
+
+    <!-- ══════════════════════════════════
+         1. PROJECT OVERVIEW
+    ══════════════════════════════════ -->
+    <div class="section" id="project-overview">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(88,166,255,0.15);">📋</div>
+        <div>
+          <h2>Project Overview</h2>
+          <p>What this project is and what it tests</p>
+        </div>
+      </div>
+
+      <p style="color:var(--text3); font-size:14px; line-height:1.9; margin-bottom: 20px;">
+        This is an <strong style="color:var(--text)">end-to-end (E2E) automation testing project</strong> built using <strong style="color:var(--accent)">Playwright</strong> — a modern, Microsoft-developed browser automation framework. The project tests the web application hosted at
+        <code style="font-family:'Fira Code'; color:var(--accent5)">https://raya-business-owner-frontend.vercel.app/</code>.
+        It follows the <strong style="color:var(--text)">Page Object Model (POM)</strong> design pattern to keep tests clean and maintainable.
+      </p>
+
+      <div class="grid-2">
+        <div class="mini-card">
+          <h4>🎯 Application Under Test</h4>
+          <p>Raya Business Owner Frontend — a SaaS platform. The tests cover user <strong>Signup</strong> (full multi-step flow) and user <strong>Login</strong>.</p>
+        </div>
+        <div class="mini-card">
+          <h4>🛠️ Tech Stack</h4>
+          <p>
+            <span class="tag tag-blue">Playwright v1.61</span>
+            <span class="tag tag-orange">JavaScript (ESM)</span>
+            <span class="tag tag-green">Node.js</span>
+            <span class="tag tag-purple">Chromium Browser</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box note">
+        <span class="info-box-icon">💡</span>
+        <p><strong>E2E Testing</strong> means we test the application the same way a real user would — by opening a real browser, clicking buttons, filling forms, and verifying results.</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         2. FOLDER STRUCTURE
+    ══════════════════════════════════ -->
+    <div class="section" id="folder-structure">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(255,166,87,0.15);">🗂️</div>
+        <div>
+          <h2>Folder Structure</h2>
+          <p>Every folder and file explained</p>
+        </div>
+      </div>
+
+      <pre>
+SersiAi_owner_Automation_Testing/
+│
+├── 📁 Pages/                    ← Page Object Model classes
+│   ├── login.js                 ← LoginPage class (locators + actions)
+│   └── Signup.js                ← signup class (locators + actions)
+│
+├── 📁 tests/                    ← Actual test files
+│   ├── login.spec.js            ← Login test spec
+│   └── signupTest.spec.js       ← Signup test spec
+│
+├── 📁 node_modules/             ← All installed npm packages (auto-generated)
+├── 📁 playwright-report/        ← HTML test reports (auto-generated)
+├── 📁 test-results/             ← Screenshots, traces on failure (auto-generated)
+├── 📁 .github/                  ← GitHub Actions CI/CD workflows
+│
+├── playwright.config.js         ← Playwright global configuration
+├── package.json                 ← Project metadata + dependencies
+├── package-lock.json            ← Exact dependency versions (lock file)
+└── .gitignore                   ← Files Git should ignore</pre>
+
+      <table class="kw-table" style="margin-top: 20px;">
+        <thead>
+          <tr><th>Folder / File</th><th>Purpose</th><th>Do you edit it?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="kw kw-purple">Pages/</span></td>
+            <td>Contains Page Object classes. Each class represents one page of the app.</td>
+            <td><span class="tag tag-green">Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-purple">tests/</span></td>
+            <td>Contains spec files. Each file has one or more <code>test()</code> blocks.</td>
+            <td><span class="tag tag-green">Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-orange">node_modules/</span></td>
+            <td>Auto-generated by <code>npm install</code>. Contains Playwright library code.</td>
+            <td><span class="tag tag-orange" style="color: var(--bg); background: var(--accent3);">Never</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-blue">playwright-report/</span></td>
+            <td>HTML report generated after each test run. Open in browser to see results.</td>
+            <td><span class="tag tag-orange" style="color: var(--bg); background: var(--accent3);">Never</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-blue">test-results/</span></td>
+            <td>Failure artifacts — screenshots, videos, trace files.</td>
+            <td><span class="tag tag-orange" style="color: var(--bg); background: var(--accent3);">Never</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">playwright.config.js</span></td>
+            <td>Configures browsers, reporters, retries, base URL, workers.</td>
+            <td><span class="tag tag-green">Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">package.json</span></td>
+            <td>Lists project name, version, and all dependencies.</td>
+            <td><span class="tag tag-green">Rarely</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-red">.gitignore</span></td>
+            <td>Tells Git to not track <code>node_modules</code>, <code>test-results</code>, etc.</td>
+            <td><span class="tag tag-green">Rarely</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════
+         3. ARCHITECTURE / POM
+    ══════════════════════════════════ -->
+    <div class="section" id="architecture">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(210,168,255,0.15);">🏛️</div>
+        <div>
+          <h2>Architecture: Page Object Model (POM)</h2>
+          <p>The design pattern used in this project</p>
+        </div>
+      </div>
+
+      <p style="color:var(--text3); font-size:14px; line-height:1.9; margin-bottom: 20px;">
+        POM is a <strong style="color:var(--text)">design pattern</strong> in test automation where you create a separate class for each page of the application. 
+        That class holds all the <strong style="color:var(--accent4)">locators</strong> (selectors that find elements) and 
+        <strong style="color:var(--accent4)">actions</strong> (methods like <code>.click()</code>, <code>.fill()</code>) for that page.
+        Test files then use these classes — they don't contain raw selectors themselves.
+      </p>
+
+      <div class="flow" style="gap:0;">
+        <div class="flow-step">Test File<span>login.spec.js</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--accent4)">Page Object<span>Pages/login.js</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Browser<span>Chromium</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Web App<span>raya-business…</span></div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 20px;">
+        <div class="mini-card">
+          <h4>✅ Why POM?</h4>
+          <p>If a button's selector changes, you fix it in <strong>one place</strong> (the Page Object) instead of searching through every test file. Makes tests <strong>maintainable, readable, and reusable</strong>.</p>
+        </div>
+        <div class="mini-card">
+          <h4>❌ Without POM</h4>
+          <p>Selectors scattered in every test file. One UI change breaks 10 tests. Hard to read. Hard to maintain. Not professional.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         4. PACKAGE.JSON
+    ══════════════════════════════════ -->
+    <div class="section" id="package-json">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(255,166,87,0.15);">📦</div>
+        <div>
+          <h2>package.json</h2>
+          <p>Project metadata and dependencies</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(255,166,87,0.15);">📦</div>
+          <h3>package.json</h3>
+          <span>Root directory</span>
+        </div>
+        <div class="file-card-body">
+          <div class="code-label">full file</div>
+          <pre>{
+  "name": "sersiai_owner_automation_testing",   <span style="color:#8b949e">// project identifier (lowercase, no spaces)</span>
+  "version": "1.0.0",                            <span style="color:#8b949e">// semantic version: major.minor.patch</span>
+  "main": "index.js",                            <span style="color:#8b949e">// entry point (not used in test projects)</span>
+  "scripts": {},                                 <span style="color:#8b949e">// custom npm run commands (empty here)</span>
+  "keywords": [],                                <span style="color:#8b949e">// search keywords for npm registry</span>
+  "author": "",                                  <span style="color:#8b949e">// your name</span>
+  "license": "ISC",                              <span style="color:#8b949e">// open-source license type</span>
+  "description": "",                             <span style="color:#8b949e">// what the project does</span>
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",               <span style="color:#8b949e">// Playwright testing library</span>
+    "@types/node": "^26.0.0"                     <span style="color:#8b949e">// TypeScript types for Node.js</span>
+  }
+}</pre>
+
+          <table class="kw-table">
+            <thead>
+              <tr><th>Key</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-orange">devDependencies</span></td>
+                <td>Packages only needed during development/testing — NOT shipped in production. Playwright goes here because end users don't run tests.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">^1.61.0</span></td>
+                <td>The <code>^</code> (caret) means "compatible version" — npm will install 1.61.x or 1.62.x but NOT 2.0.0 (major version locked).</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">@playwright/test</span></td>
+                <td>The scoped package name. <code>@playwright</code> is the organization, <code>test</code> is the package. Scoped packages prevent name conflicts.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">@types/node</span></td>
+                <td>TypeScript type definitions for Node.js built-in modules. Provides autocomplete for things like <code>process.env</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         5. PLAYWRIGHT CONFIG
+    ══════════════════════════════════ -->
+    <div class="section" id="playwright-config">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(255,166,87,0.15);">⚙️</div>
+        <div>
+          <h2>playwright.config.js</h2>
+          <p>The brain of Playwright — controls how tests run</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(255,166,87,0.15);">⚙️</div>
+          <h3>playwright.config.js</h3>
+          <span>Root directory</span>
+        </div>
+        <div class="file-card-body">
+          <pre><span style="color:#8b949e">// @ts-check  ← Enables TypeScript type checking in plain JS file (editor hints)</span>
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests',            <span style="color:#8b949e">// Where to look for test files</span>
+  fullyParallel: true,           <span style="color:#8b949e">// Run all tests at the same time (faster)</span>
+  forbidOnly: !!process.env.CI,  <span style="color:#8b949e">// Fail build if test.only() left in code (CI safety)</span>
+  retries: process.env.CI ? 2 : 0, <span style="color:#8b949e">// On CI: retry failed tests 2 times; locally: 0</span>
+  workers: process.env.CI ? 1 : undefined, <span style="color:#8b949e">// On CI: 1 parallel worker; locally: auto</span>
+  reporter: 'html',              <span style="color:#8b949e">// Generate an HTML report after tests finish</span>
+
+  use: {
+    trace: 'on-first-retry',     <span style="color:#8b949e">// Record a trace only when test is retried (debugging)</span>
+  },
+
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] }, <span style="color:#8b949e">// Spread operator: copies Chrome device settings</span>
+    },
+  ],
+});</pre>
+
+          <table class="kw-table">
+            <thead>
+              <tr><th>Option</th><th>Explanation</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-blue">defineConfig()</span></td>
+                <td>A helper function from Playwright that enables type-safety and autocomplete for the config object. Not strictly required but best practice.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">devices</span></td>
+                <td>A pre-built collection of device profiles (screen size, user agent) for Chrome, Firefox, Safari, iPhone, Pixel, etc.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">testDir</span></td>
+                <td>Playwright scans this folder for files ending in <code>.spec.js</code>, <code>.test.js</code>, etc.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">fullyParallel</span></td>
+                <td>All test files run at the same time using multiple browser instances. Speeds up the suite significantly.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">process.env.CI</span></td>
+                <td><code>process.env</code> is a Node.js object containing environment variables. <code>CI</code> is set to <code>"true"</code> automatically by GitHub Actions, Jenkins, etc.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-red">!!</span></td>
+                <td>Double NOT operator. Converts any truthy/falsy value to a strict <code>true</code> or <code>false</code> boolean. e.g. <code>!!"hello"</code> = <code>true</code>, <code>!!undefined</code> = <code>false</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">trace: 'on-first-retry'</span></td>
+                <td>Records a Playwright Trace (network, DOM snapshots, screenshots) only when a test fails and is retried. View with <code>npx playwright show-trace</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">...devices['Desktop Chrome']</span></td>
+                <td>The spread operator (<code>...</code>) copies all properties from the Chrome device object into the <code>use</code> object. It's like copy-pasting settings.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">reporter: 'html'</span></td>
+                <td>After tests finish, Playwright generates a rich HTML report. Open with <code>npx playwright show-report</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         6. LOGIN PAGE OBJECT
+    ══════════════════════════════════ -->
+    <div class="section" id="login-page">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(210,168,255,0.15);">🔐</div>
+        <div>
+          <h2>Pages/login.js — LoginPage Class</h2>
+          <p>Page Object for the Login page</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(210,168,255,0.15);">🔐</div>
+          <h3>Pages/login.js</h3>
+          <span>Page Object Model</span>
+        </div>
+        <div class="file-card-body">
+          <pre><span class="highlight-line">export class LoginPage {                               </span><span style="color:#8b949e">// ← Line 1: Named export of a class</span>
+
+    constructor(page) {                                <span style="color:#8b949e">// ← Runs when: new LoginPage(page)</span>
+        this.page = page;                              <span style="color:#8b949e">// ← Save page reference on the instance</span>
+        this.email_txtbox = page.getByRole('textbox', { name: 'Enter your email' });
+        this.pass_txtbox  = page.getByRole('textbox', { name: 'Enter your password' });
+        this.login_btn    = page.getByRole('button',  { name: 'Login' });
+    }                                                  <span style="color:#8b949e">// ← All locators stored as instance properties</span>
+
+    async login(email, password) {                     <span style="color:#8b949e">// ← async: function returns a Promise</span>
+        await this.email_txtbox.click();               <span style="color:#8b949e">// ← wait for click to complete</span>
+        await this.email_txtbox.fill(email);           <span style="color:#8b949e">// ← type the email parameter into the field</span>
+        await this.pass_txtbox.click();
+        await this.pass_txtbox.fill(password);
+        await this.login_btn.click();
+    }
+
+    async gotoLoginPage() {
+        await this.page.goto("https://raya-business-owner-frontend.vercel.app/");
+    }
+}</pre>
+
+          <table class="kw-table">
+            <thead><tr><th>Keyword / Method</th><th>Detailed Explanation</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-blue">export</span></td>
+                <td>Makes this class available to be imported in other files. Without <code>export</code>, the class is private to this file only.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">class</span></td>
+                <td>A blueprint for creating objects. Defines what properties and methods the object will have. In OOP terms: a class is a template, an object is an instance of that template.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">constructor(page)</span></td>
+                <td>A special method called automatically when you do <code>new LoginPage(page)</code>. Used to initialize the object's properties. The <code>page</code> parameter is the Playwright Page object passed in.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">this</span></td>
+                <td>Refers to the current instance of the class. <code>this.page = page</code> saves the page reference so other methods can use <code>this.page</code> later.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">async</span></td>
+                <td>Marks a function as asynchronous. It will always return a <code>Promise</code>. Required when using <code>await</code> inside the function. Playwright actions are async because they involve network/browser operations.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">await</span></td>
+                <td>Pauses execution until the Promise resolves. Without <code>await</code>, the browser action starts but the code moves to the next line immediately — causing race conditions and errors.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-red">getByRole('textbox', {name:...})</span></td>
+                <td>Finds an element by its ARIA role. <code>'textbox'</code> finds input fields. The <code>name</code> option matches the accessible label of the field. This is the <strong>recommended</strong> Playwright locator because it mimics how users interact with UI.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-red">getByRole('button', {name:...})</span></td>
+                <td>Finds a button element by its visible text or ARIA label. More reliable than CSS selectors because it doesn't break when styling changes.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">.click()</span></td>
+                <td>Simulates a mouse click on the element. Playwright auto-waits for the element to be visible and enabled before clicking.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">.fill(value)</span></td>
+                <td>Clears the input field and types the given value. More reliable than <code>.type()</code> because it sets the value directly.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">.goto(url)</span></td>
+                <td>Navigates the browser to the given URL. Waits until the page is in the <code>'load'</code> state by default.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         7. SIGNUP PAGE OBJECT
+    ══════════════════════════════════ -->
+    <div class="section" id="signup-page">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(210,168,255,0.15);">✍️</div>
+        <div>
+          <h2>Pages/Signup.js — signup Class</h2>
+          <p>Page Object for the complete multi-step Signup flow</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(210,168,255,0.15);">✍️</div>
+          <h3>Pages/Signup.js</h3>
+          <span>109 lines · Full signup flow</span>
+        </div>
+        <div class="file-card-body">
+          <div class="code-label">constructor + locators</div>
+          <pre>export class signup {
+
+    constructor(page) {
+        this.page = page;
+        this.nameField   = page.getByRole('textbox', { name: 'Enter your name' });
+        this.emailField  = page.getByRole('textbox', { name: 'Enter your email' });
+        this.aggreeterms = page.locator('.trust-checkbox').first();  <span style="color:#8b949e">// CSS class selector</span>
+        this.signupbtn   = page.getByRole('button', { name: 'Sign Up' });
+        this.otp1 = page.locator('#otp-0');  <span style="color:#8b949e">// ID selector #id</span>
+        this.otp2 = page.locator('#otp-1');
+        this.otp3 = page.locator('#otp-2');
+        this.otp4 = page.locator('#otp-3');
+        this.otp5 = page.locator('#otp-4');
+        this.otp6 = page.locator('#otp-5');
+        this.verifyotp = page.getByRole('button', { name: 'Verify OTP' });
+    }</pre>
+
+          <div class="code-label" style="margin-top:16px;">signuptoWeb — step-by-step flow</div>
+          <pre>    async signuptoWeb(name, email, otp) {
+        <span style="color:#8b949e">// ── STEP 1: Initial Signup Form ────────────────────────────</span>
+        await this.nameField.fill(name);          <span style="color:#8b949e">// fill name field with parameter</span>
+        await this.emailField.fill(email);        <span style="color:#8b949e">// fill email field with parameter</span>
+        await this.aggreeterms.click();           <span style="color:#8b949e">// tick the T&C checkbox</span>
+        await this.signupbtn.click();             <span style="color:#8b949e">// click Sign Up → sends OTP to email</span>
+
+        <span style="color:#8b949e">// ── STEP 2: OTP Verification (6 separate boxes) ────────────</span>
+        await this.otp1.fill(otp);  <span style="color:#8b949e">// otp = "123456" → fills '1' into box 1</span>
+        await this.otp2.fill(otp);  <span style="color:#8b949e">// Note: each box gets the FULL string</span>
+        await this.otp3.fill(otp);  <span style="color:#8b949e">// (app internally reads first char of each)</span>
+        await this.otp4.fill(otp);
+        await this.otp5.fill(otp);
+        await this.otp6.fill(otp);
+        await this.verifyotp.click();  <span style="color:#8b949e">// submit OTP</span>
+
+        <span style="color:#8b949e">// ── STEP 3: Terms & Plan Selection ─────────────────────────</span>
+        await this.aggreeterms.first().click();
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+        await this.page.getByRole('button', { name: 'Select this plan' }).nth(1).click();
+        <span style="color:#8b949e">// .nth(1) = second matching element (0-indexed)</span>
+
+        <span style="color:#8b949e">// ── STEP 4: Billing / Payment Form ─────────────────────────</span>
+        await this.page.getByRole('textbox', { name: '0000 0000 0000' }).fill('0000000000000000');
+        await this.page.getByRole('textbox', { name: '/00' }).fill('11/50');       <span style="color:#8b949e">// expiry</span>
+        await this.page.getByRole('textbox', { name: '000', exact: true }).fill('123'); <span style="color:#8b949e">// CVV</span>
+        await this.page.getByRole('button', { name: 'Pay now' }).click();
+
+        <span style="color:#8b949e">// ── STEP 5: Password Creation ───────────────────────────────</span>
+        await this.page.getByRole('textbox', { name: 'Enter password', exact: true }).press('CapsLock');
+        await this.page.getByRole('textbox', { name: 'Enter password', exact: true }).fill('Test@123');
+        await this.page.getByRole('button', { name: 'Create' }).click();
+
+        <span style="color:#8b949e">// ── STEP 6: Business Profile Setup ─────────────────────────</span>
+        await this.page.getByRole('textbox', { name: 'Enter your business name' }).fill('qaTech');
+        await this.page.locator('.dropdown-selected').first().click();
+        await this.page.getByText('Spa', { exact: true }).click();
+        await this.page.locator('div:nth-child(6) > .common-dropdown > .dropdown-selected').click();
+        await this.page.getByText('Pacific Time - US &amp; Canada').click();
+        <span style="color:#8b949e">// CSS child combinator: div:nth-child(6) > .common-dropdown > .dropdown-selected</span>
+
+        <span style="color:#8b949e">// ── STEP 7: Address ────────────────────────────────────────</span>
+        await this.page.getByRole('textbox', { name: 'Enter Address' }).fill('indore');
+        await this.page.getByText('United States').click();
+        await this.page.getByText('Alabama').click();
+        await this.page.getByRole('textbox', { name: 'Enter Zip Code' }).fill('456776');
+        await this.page.getByRole('textbox', { name: 'Ex. MangoMint' }).fill('aropay');
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+
+        <span style="color:#8b949e">// ── STEP 8: Training System Selection ──────────────────────</span>
+        await this.page.getByText('Build Your Training System...').click();
+        await this.page.getByRole('button', { name: 'Continue' }).click();
+    }</pre>
+
+          <div class="info-box tip">
+            <span class="info-box-icon">💡</span>
+            <p>The signup flow has <strong>8 steps</strong> — this is a full end-to-end test covering form fill, OTP verification, payment, password creation, and business profile setup.</p>
+          </div>
+
+          <table class="kw-table">
+            <thead><tr><th>Keyword / Method</th><th>Explanation</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-red">locator('.trust-checkbox')</span></td>
+                <td>CSS class selector. The dot <code>.</code> means "find element with class name <code>trust-checkbox</code>". Equivalent to CSS <code>.trust-checkbox</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-red">locator('#otp-0')</span></td>
+                <td>CSS ID selector. The hash <code>#</code> means "find element with id <code>otp-0</code>". IDs are unique per page, so this is very precise.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">.first()</span></td>
+                <td>When a locator matches multiple elements, <code>.first()</code> picks the very first one (index 0).</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">.nth(1)</span></td>
+                <td>Picks the element at index 1 (second element, since indexing starts at 0). <code>.nth(0)</code> = same as <code>.first()</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">.press('CapsLock')</span></td>
+                <td>Simulates pressing a keyboard key. Here used to toggle CapsLock before typing a password. Other examples: <code>'Enter'</code>, <code>'Tab'</code>, <code>'Escape'</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">getByText('Spa', { exact: true })</span></td>
+                <td>Finds an element by its visible text content. <code>exact: true</code> means exact match (case-sensitive). Without <code>exact</code>, it matches text that <em>contains</em> "Spa".</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">div:nth-child(6) > .dropdown</span></td>
+                <td>CSS child combinator (<code>></code>). Finds <code>.dropdown</code> that is a <strong>direct child</strong> of the 6th <code>div</code>. More specific than a space (descendant) selector.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">locator('div').filter({ hasText: /^Address$/ })</span></td>
+                <td><code>.filter()</code> narrows down matched elements. <code>hasText</code> accepts a regex. <code>/^Address$/</code> is a regex meaning: starts with <code>^</code> and ends with <code>$</code> "Address" — exact match.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">locator('svg').nth(1)</span></td>
+                <td>Targets SVG elements (icons) by their tag name. <code>nth(1)</code> picks the second SVG (e.g., a toggle icon for show/hide password).</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">{ name: '000', exact: true }</span></td>
+                <td>The <code>exact</code> option forces exact label matching. Without it, a field labeled "0000 0000 0000" would also match <code>'000'</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         8. LOGIN TEST FILE
+    ══════════════════════════════════ -->
+    <div class="section" id="login-test">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(63,185,80,0.15);">🧪</div>
+        <div>
+          <h2>tests/login.spec.js</h2>
+          <p>The actual test for login functionality</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(63,185,80,0.15);">🧪</div>
+          <h3>tests/login.spec.js</h3>
+          <span>Test Spec File</span>
+        </div>
+        <div class="file-card-body">
+          <pre><span class="highlight-line">import { test, expect } from '@playwright/test';       </span><span style="color:#8b949e">// ← import Playwright's test runner + assertion</span>
+<span class="highlight-line">import { LoginPage } from '../Pages/login';            </span><span style="color:#8b949e">// ← import the Page Object class</span>
+
+test('User should able to Login Successfully', async ({ page }) => {
+<span style="color:#8b949e">// ↑ test()  ─ registers a test case with Playwright's runner
+// ↑ 'User should...' ─ test name (shown in report)
+// ↑ async ({ page }) => {...} ─ async callback with destructured page fixture</span>
+
+    const login = new LoginPage(page);
+<span style="color:#8b949e">    // ↑ Create an instance of the LoginPage class, passing the page object</span>
+
+    await login.gotoLoginPage();
+<span style="color:#8b949e">    // ↑ Navigate to the login URL (awaited because it's async)</span>
+
+    await login.login("test@gmail.com", "password");
+<span style="color:#8b949e">    // ↑ Call the login method with credentials</span>
+});</pre>
+
+          <table class="kw-table">
+            <thead><tr><th>Keyword</th><th>Explanation</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-blue">import { test, expect }</span></td>
+                <td>ES Module named import. Pulls only <code>test</code> and <code>expect</code> from the Playwright package. <code>test</code> registers a test. <code>expect</code> is used for assertions (not used in this file yet).</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-blue">import { LoginPage } from '../Pages/login'</span></td>
+                <td><code>../</code> goes up one folder (from <code>tests/</code> to the root), then into <code>Pages/</code>. The curly braces <code>{}</code> indicate a named import (because we used <code>export class</code>, not <code>export default</code>).</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">test(name, callback)</span></td>
+                <td>Registers a test case. The first argument is the display name. The second is an async function that contains the test steps.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">async ({ page }) =&gt; {}</span></td>
+                <td>An async arrow function. <code>{ page }</code> is <strong>destructuring</strong> — Playwright passes a fixtures object; we extract only <code>page</code> from it. <code>page</code> is a fresh browser page for each test.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">const</span></td>
+                <td>Declares a block-scoped variable that cannot be reassigned. Use <code>const</code> when the variable reference won't change. <code>let</code> when it will. Never use <code>var</code> in modern JS.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">new LoginPage(page)</span></td>
+                <td><code>new</code> calls the constructor of the class and creates an instance (object). The <code>page</code> fixture is passed so the Page Object can interact with the browser.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-orange">.spec.js</span></td>
+                <td>The <code>.spec.</code> suffix is a naming convention meaning "specification test". Playwright automatically discovers files matching <code>*.spec.js</code>, <code>*.test.js</code>, etc.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         9. SIGNUP TEST FILE
+    ══════════════════════════════════ -->
+    <div class="section" id="signup-test">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(63,185,80,0.15);">🧪</div>
+        <div>
+          <h2>tests/signupTest.spec.js</h2>
+          <p>The actual test for the full signup flow</p>
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-icon" style="background:rgba(63,185,80,0.15);">🧪</div>
+          <h3>tests/signupTest.spec.js</h3>
+          <span>Test Spec File</span>
+        </div>
+        <div class="file-card-body">
+          <pre>import { test, expect } from '@playwright/test';
+import { signup } from '../Pages/Signup';
+
+test('New User should sign up successfully', async ({ page }) => {
+
+    const SignUp = new signup(page);
+    await SignUp.gotoSignUp();
+    await SignUp.signuptoWeb("rishabh", "rishabh@gmail.com", "123456");
+<span style="color:#8b949e">    // ↑ Passes: name, email, OTP string to the signup method</span>
+    <span style="color:#8b949e">// The method then handles all 8 steps of the signup flow</span>
+});</pre>
+
+          <div class="info-box warn">
+            <span class="info-box-icon">⚠️</span>
+            <p><strong>Note:</strong> The <code>expect</code> import is present but no assertions are written yet. In a complete test, you'd add <code>await expect(page).toHaveURL('/dashboard')</code> or similar to verify the signup actually succeeded.</p>
+          </div>
+
+          <table class="kw-table">
+            <thead><tr><th>Line</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="kw kw-blue">import { signup }</span></td>
+                <td>Named import of the <code>signup</code> class. Note: the class is lowercase <code>signup</code> — not a best practice (classes should be PascalCase like <code>Signup</code>), but it works.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-purple">new signup(page)</span></td>
+                <td>Creates a signup page object instance. The constructor runs, storing all 13 locators on <code>this</code>.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">await SignUp.gotoSignUp()</span></td>
+                <td>Opens <code>/signup</code> URL. Must be awaited — if not, the browser starts navigating but the next line runs immediately (before the page loads), causing errors.</td>
+              </tr>
+              <tr>
+                <td><span class="kw kw-green">signuptoWeb("rishabh", "rishabh@gmail.com", "123456")</span></td>
+                <td>Passes 3 arguments: <code>name</code>, <code>email</code>, <code>otp</code>. These become the function parameters inside <code>signuptoWeb(name, email, otp)</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         10. JS KEYWORDS
+    ══════════════════════════════════ -->
+    <div class="section" id="keywords-js">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(247,129,102,0.15);">📘</div>
+        <div>
+          <h2>JavaScript Keywords — Complete Reference</h2>
+          <p>Every JS keyword used in this project, explained</p>
+        </div>
+      </div>
+
+      <table class="kw-table">
+        <thead><tr><th>Keyword</th><th>Category</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kw kw-blue">import</span></td><td><span class="tag tag-orange">ES Module</span></td><td>Loads code from another file/package into current scope.</td></tr>
+          <tr><td><span class="kw kw-blue">export</span></td><td><span class="tag tag-orange">ES Module</span></td><td>Makes a function, class, or variable available for import in other files.</td></tr>
+          <tr><td><span class="kw kw-blue">from</span></td><td><span class="tag tag-orange">ES Module</span></td><td>Specifies the file/package to import from.</td></tr>
+          <tr><td><span class="kw kw-green">class</span></td><td><span class="tag tag-purple">OOP</span></td><td>Blueprint for creating objects with shared properties and methods.</td></tr>
+          <tr><td><span class="kw kw-green">constructor</span></td><td><span class="tag tag-purple">OOP</span></td><td>Special method auto-called on <code>new ClassName()</code>. Used to initialize properties.</td></tr>
+          <tr><td><span class="kw kw-orange">this</span></td><td><span class="tag tag-purple">OOP</span></td><td>Reference to the current object instance. Allows methods to share data.</td></tr>
+          <tr><td><span class="kw kw-purple">new</span></td><td><span class="tag tag-purple">OOP</span></td><td>Creates a new instance of a class by calling its constructor.</td></tr>
+          <tr><td><span class="kw kw-blue">async</span></td><td><span class="tag tag-blue">Async</span></td><td>Marks a function as asynchronous; it implicitly returns a Promise.</td></tr>
+          <tr><td><span class="kw kw-blue">await</span></td><td><span class="tag tag-blue">Async</span></td><td>Pauses async function until the awaited Promise resolves. Only works inside async functions.</td></tr>
+          <tr><td><span class="kw kw-green">const</span></td><td><span class="tag tag-green">Variables</span></td><td>Block-scoped variable. Cannot be reassigned after declaration.</td></tr>
+          <tr><td><span class="kw kw-green">let</span></td><td><span class="tag tag-green">Variables</span></td><td>Block-scoped variable. Can be reassigned. Use when value changes.</td></tr>
+          <tr><td><span class="kw kw-red">var</span></td><td><span class="tag tag-green">Variables</span></td><td>Function-scoped (old style). Avoid in modern JS — use <code>const</code>/<code>let</code>.</td></tr>
+          <tr><td><span class="kw kw-orange">=&gt;</span></td><td><span class="tag tag-orange">Functions</span></td><td>Arrow function syntax. Shorter than <code>function(){}</code>. Inherits <code>this</code> from surrounding scope.</td></tr>
+          <tr><td><span class="kw kw-orange">{ }</span></td><td><span class="tag tag-orange">Destructuring</span></td><td>In imports/parameters: extracts named properties. e.g. <code>({ page })</code> pulls <code>page</code> from the fixtures object.</td></tr>
+          <tr><td><span class="kw kw-purple">...</span></td><td><span class="tag tag-orange">Spread</span></td><td>Copies all properties of an object. <code>{ ...devices['Desktop Chrome'] }</code> spreads device settings.</td></tr>
+          <tr><td><span class="kw kw-blue">!!</span></td><td><span class="tag tag-green">Boolean</span></td><td>Double negation. Converts truthy/falsy values to strict <code>true</code>/<code>false</code>.</td></tr>
+          <tr><td><span class="kw kw-red">?</span> ternary</td><td><span class="tag tag-green">Control</span></td><td><code>condition ? valueIfTrue : valueIfFalse</code>. Used in config for CI checks.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════
+         11. PLAYWRIGHT API
+    ══════════════════════════════════ -->
+    <div class="section" id="keywords-playwright">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(247,129,102,0.15);">🎭</div>
+        <div>
+          <h2>Playwright API — Complete Reference</h2>
+          <p>Every Playwright method used in this project</p>
+        </div>
+      </div>
+
+      <table class="kw-table">
+        <thead><tr><th>Method</th><th>What it does</th><th>Auto-waits?</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="kw kw-blue">page.goto(url)</span></td>
+            <td>Navigates browser to URL. Waits for the <code>load</code> event by default.</td>
+            <td><span class="tag tag-green">✅ Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-blue">page.getByRole(role, {name})</span></td>
+            <td>Finds element by ARIA role + accessible name. Roles: <code>'textbox'</code>, <code>'button'</code>, <code>'heading'</code>, <code>'link'</code>, <code>'checkbox'</code>, etc.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-purple">page.getByText(text, {exact})</span></td>
+            <td>Finds element by visible text content. <code>exact:true</code> = full match, <code>false</code> = partial match.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-orange">page.locator(selector)</span></td>
+            <td>Finds element using CSS or XPath selectors. Supports: <code>.class</code>, <code>#id</code>, <code>tag</code>, XPath, etc.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">locator.click()</span></td>
+            <td>Clicks the element. Waits for it to be visible, enabled, and stable before clicking.</td>
+            <td><span class="tag tag-green">✅ Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">locator.fill(value)</span></td>
+            <td>Clears existing content and types the value. Works with <code>input</code>, <code>textarea</code>, <code>contenteditable</code>.</td>
+            <td><span class="tag tag-green">✅ Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-blue">locator.press(key)</span></td>
+            <td>Simulates keyboard key press. Keys: <code>'Enter'</code>, <code>'Tab'</code>, <code>'CapsLock'</code>, <code>'Escape'</code>, <code>'ArrowDown'</code>, etc.</td>
+            <td><span class="tag tag-green">✅ Yes</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-red">locator.first()</span></td>
+            <td>When a locator matches multiple elements, returns only the first one.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-red">locator.nth(index)</span></td>
+            <td>Returns element at the given zero-based index. <code>nth(0)</code> = first, <code>nth(1)</code> = second.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-purple">locator.filter({ hasText })</span></td>
+            <td>Filters matched elements to only those whose text matches. Accepts string or regex.</td>
+            <td><span class="tag tag-blue">Lazy</span></td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-orange">test(name, fn)</span></td>
+            <td>Registers a test case. The <code>fn</code> is an async function receiving Playwright fixtures.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-orange">expect(value)</span></td>
+            <td>Creates an assertion. Chain with matchers: <code>.toHaveURL()</code>, <code>.toBeVisible()</code>, <code>.toHaveText()</code>, <code>.toBeTruthy()</code>.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">defineConfig()</span></td>
+            <td>Wraps the config object to provide TypeScript type-checking and editor autocomplete.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="kw kw-green">devices</span></td>
+            <td>Pre-built device descriptor objects with viewport size, userAgent, etc. for browsers and devices.</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════
+         12. LOCATOR STRATEGIES
+    ══════════════════════════════════ -->
+    <div class="section" id="locator-strategies">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(247,129,102,0.15);">🎯</div>
+        <div>
+          <h2>Locator Strategies</h2>
+          <p>How Playwright finds elements on the page</p>
+        </div>
+      </div>
+
+      <p style="color:var(--text3); font-size:14px; margin-bottom:20px;">
+        A <strong style="color:var(--text)">locator</strong> is how Playwright identifies and interacts with an HTML element. Choosing the right locator makes tests robust and less likely to break when the UI changes.
+      </p>
+
+      <table class="kw-table">
+        <thead>
+          <tr><th>Strategy</th><th>Example in Code</th><th>When to Use</th><th>Reliability</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--accent)">By Role</strong></td>
+            <td><code>getByRole('textbox', {name: 'Email'})</code></td>
+            <td>✅ Always preferred. Mimics how screen readers see the page.</td>
+            <td><span class="tag tag-green">⭐⭐⭐⭐⭐</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent)">By Text</strong></td>
+            <td><code>getByText('Sign Up')</code></td>
+            <td>Good for buttons/links with visible text.</td>
+            <td><span class="tag tag-green">⭐⭐⭐⭐</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">CSS Class</strong></td>
+            <td><code>locator('.trust-checkbox')</code></td>
+            <td>When no ARIA role/label is available. Can break if CSS changes.</td>
+            <td><span class="tag tag-orange">⭐⭐⭐</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">CSS ID</strong></td>
+            <td><code>locator('#otp-0')</code></td>
+            <td>When element has a stable unique ID. IDs are unique per page.</td>
+            <td><span class="tag tag-green">⭐⭐⭐⭐</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent5)">CSS Child</strong></td>
+            <td><code>locator('div:nth-child(6) > .dropdown')</code></td>
+            <td>Last resort for complex nested structures. Fragile.</td>
+            <td><span class="tag tag-orange">⭐⭐</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent3)">SVG Tag</strong></td>
+            <td><code>locator('svg').nth(1)</code></td>
+            <td>For icon elements that have no text/role. Very fragile.</td>
+            <td><span class="tag tag-orange">⭐</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box tip">
+        <span class="info-box-icon">🏆</span>
+        <p><strong>Interview Tip:</strong> Always say "I prefer <code>getByRole()</code> over CSS selectors because it's more aligned with accessibility standards and is less likely to break when the UI is restyled."</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         13. INTERVIEW Q&A
+    ══════════════════════════════════ -->
+    <div class="section" id="interview-qa">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(63,185,80,0.15);">🎯</div>
+        <div>
+          <h2>Interview Q&amp;A Bank</h2>
+          <p>Top questions with model answers based on this project</p>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is Playwright? Why use it over Selenium?</div>
+        <div class="qa-answer">
+          Playwright is a Microsoft-developed open-source browser automation framework for Node.js, Python, Java, and .NET. Unlike Selenium, Playwright supports <strong>auto-waiting</strong> (no explicit waits needed), runs <strong>multiple browsers</strong> (Chromium, Firefox, WebKit) in a single API, supports <strong>parallel execution</strong> out of the box, and has a built-in <strong>trace viewer</strong> and <strong>HTML reporter</strong>. It also supports <strong>network interception</strong> and <strong>mobile emulation</strong> natively.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is Page Object Model (POM) and why do you use it?</div>
+        <div class="qa-answer">
+          POM is a design pattern where each page of the application has a corresponding class. This class stores all element locators and action methods for that page. Benefits: <strong>(1) Reusability</strong> — write the locator once, use it in many tests. <strong>(2) Maintainability</strong> — if a selector changes, update one file. <strong>(3) Readability</strong> — tests read like plain English, not selector soup.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is async/await? Why is it needed in Playwright?</div>
+        <div class="qa-answer">
+          <code>async/await</code> is JavaScript's syntax for handling Promises (asynchronous operations). Playwright actions like <code>page.goto()</code>, <code>.click()</code>, <code>.fill()</code> are async because they involve browser network operations that take time. Without <code>await</code>, the next line runs immediately before the browser action completes — causing race conditions and failures. <code>async</code> marks the function as asynchronous; <code>await</code> pauses execution until the Promise resolves.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is the difference between export and export default?</div>
+        <div class="qa-answer">
+          <code>export class Foo</code> is a <strong>named export</strong> — imported with curly braces: <code>import { Foo } from './file'</code>. A file can have multiple named exports. <code>export default class Foo</code> is a <strong>default export</strong> — imported without braces: <code>import Foo from './file'</code>. A file can have only one default export. This project uses named exports (<code>export class LoginPage</code>, <code>export class signup</code>).
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is getByRole() and why is it preferred?</div>
+        <div class="qa-answer">
+          <code>getByRole()</code> locates elements by their ARIA role (e.g., <code>'button'</code>, <code>'textbox'</code>, <code>'heading'</code>) and accessible name. It's preferred because: <strong>(1)</strong> It's accessibility-first — tests what users actually see. <strong>(2)</strong> It's resilient to styling/CSS changes. <strong>(3)</strong> Playwright recommends it as the first locator strategy. Compare to CSS selectors which break if a class name changes.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What does .first() and .nth() do?</div>
+        <div class="qa-answer">
+          When a locator matches multiple elements on the page, <code>.first()</code> selects the first element (index 0) and <code>.nth(n)</code> selects the element at index <code>n</code> (zero-based). For example, <code>page.locator('.trust-checkbox').first()</code> selects the first checkbox with class <code>trust-checkbox</code>. Without these, Playwright throws an error if more than one element is matched.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is the constructor in a class?</div>
+        <div class="qa-answer">
+          The <code>constructor</code> is a special method that runs automatically when you create an instance with <code>new</code>. It initializes the object's properties. In this project, the constructor takes a <code>page</code> parameter and stores all the element locators as <code>this.propertyName</code> so they can be used in other methods of the class.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is playwright.config.js and what are its key options?</div>
+        <div class="qa-answer">
+          It's the global configuration file for Playwright. Key options: <strong>testDir</strong> — where test files are. <strong>fullyParallel</strong> — run all tests simultaneously. <strong>retries</strong> — retry failed tests N times. <strong>reporter</strong> — how to report results (<code>'html'</code>, <code>'json'</code>, <code>'list'</code>). <strong>projects</strong> — which browsers to test on. <strong>use.trace</strong> — when to record execution traces.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is process.env.CI and why is it used in the config?</div>
+        <div class="qa-answer">
+          <code>process.env</code> is a Node.js object containing operating system environment variables. <code>CI</code> is a variable automatically set to <code>"true"</code> by CI/CD platforms like GitHub Actions, Jenkins, and CircleCI. By checking <code>process.env.CI</code>, the config behaves differently in CI (e.g., more retries, 1 worker, fail on <code>test.only</code>) vs. local development.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is the difference between .fill() and .type()?</div>
+        <div class="qa-answer">
+          <code>.fill(value)</code> clears the input and sets the value directly — it's faster and more reliable. <code>.type(value)</code> simulates actual key presses character by character — slower but useful when testing key-event listeners. For most E2E tests, <code>.fill()</code> is preferred. Playwright's <code>.fill()</code> also dispatches input/change events properly.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is the spread operator (...) in the config?</div>
+        <div class="qa-answer">
+          <code>...devices['Desktop Chrome']</code> — the spread operator copies all properties of the Chrome device object (viewport width, height, userAgent, etc.) into the <code>use</code> object. It's equivalent to manually listing every property. This allows you to add extra settings alongside the device preset without modifying the original object.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">How do you run only one test file? How do you run tests in headed mode?</div>
+        <div class="qa-answer">
+          Run a specific file: <code>npx playwright test login.spec.js</code>. Run in headed mode (see the browser): <code>npx playwright test --headed</code>. Run a specific test by name: <code>npx playwright test -g "User should able to Login"</code>. Open interactive UI mode: <code>npx playwright test --ui</code>. Show last HTML report: <code>npx playwright show-report</code>.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is a fixture in Playwright (e.g., the page object in tests)?</div>
+        <div class="qa-answer">
+          Fixtures are built-in helpers Playwright provides to each test. The most common is <code>page</code> — a fresh browser page created before each test and destroyed after. Others include <code>browser</code>, <code>context</code>, <code>request</code>. They're passed via destructuring: <code>async ({ page }) =&gt; {}</code>. Playwright handles setup/teardown of fixtures automatically, ensuring test isolation.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is devDependencies vs dependencies in package.json?</div>
+        <div class="qa-answer">
+          <strong><code>dependencies</code></strong>: packages needed in production (e.g., Express, React). <strong><code>devDependencies</code></strong>: packages only needed during development/testing (e.g., Playwright, Jest, ESLint). When deploying to production with <code>npm install --production</code>, devDependencies are skipped. Playwright goes in devDependencies because end users don't run tests.
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question">What is the this keyword and why is it important in classes?</div>
+        <div class="qa-answer">
+          <code>this</code> refers to the current instance of the class. In the constructor, <code>this.page = page</code> stores the Playwright page on the instance so other methods like <code>login()</code> can access it via <code>this.page</code>. Without <code>this</code>, each method would have no shared state — it would be a standalone function, not part of an object.
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         14. CLI COMMANDS
+    ══════════════════════════════════ -->
+    <div class="section" id="commands">
+      <div class="section-header">
+        <div class="section-icon" style="background: rgba(63,185,80,0.15);">💻</div>
+        <div>
+          <h2>Essential CLI Commands</h2>
+          <p>Commands you'll use every day</p>
+        </div>
+      </div>
+
+      <table class="kw-table">
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kw kw-green">npm install</span></td><td>Installs all packages listed in <code>package.json</code> into <code>node_modules/</code>.</td></tr>
+          <tr><td><span class="kw kw-green">npx playwright install</span></td><td>Downloads browser binaries (Chromium, Firefox, WebKit) needed by Playwright.</td></tr>
+          <tr><td><span class="kw kw-blue">npx playwright test</span></td><td>Runs all test files in headless mode (no browser UI visible).</td></tr>
+          <tr><td><span class="kw kw-blue">npx playwright test --headed</span></td><td>Runs tests with browser UI visible — great for debugging.</td></tr>
+          <tr><td><span class="kw kw-blue">npx playwright test signupTest.spec.js</span></td><td>Runs only the specified test file.</td></tr>
+          <tr><td><span class="kw kw-blue">npx playwright test -g "Login"</span></td><td>Runs tests whose name contains "Login".</td></tr>
+          <tr><td><span class="kw kw-blue">npx playwright test --ui</span></td><td>Opens Playwright's interactive UI — lets you pick and run tests visually.</td></tr>
+          <tr><td><span class="kw kw-purple">npx playwright show-report</span></td><td>Opens the last generated HTML report in your browser.</td></tr>
+          <tr><td><span class="kw kw-purple">npx playwright codegen [url]</span></td><td>Opens browser and records your actions as Playwright code — great for generating locators.</td></tr>
+          <tr><td><span class="kw kw-orange">npx playwright test --debug</span></td><td>Runs tests in debug mode with Playwright Inspector — step through actions one by one.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider" />
+    <div style="text-align:center; padding: 20px 0 40px; color: var(--text2); font-size: 13px;">
+      <span style="font-size:24px; display:block; margin-bottom:10px;">🎭</span>
+      Built for <strong style="color:var(--text)">SersiAi Automation Testing</strong> · Project Docs<br/>
+      <span style="color: var(--accent); margin-top:6px; display:block;">Happy Learning! 🚀</span>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end #main -->
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('.section');
+  const links = document.querySelectorAll('.sidebar-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const id = entry.target.getAttribute('id');
+        const active = document.querySelector(`.sidebar-link[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-100px 0px -50% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
