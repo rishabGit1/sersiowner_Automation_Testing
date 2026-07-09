@@ -9,7 +9,7 @@ test('Business owner should able to create new roles and add new team members', 
 
 
     await SignUp.gotoSignUp();
-    await SignUp.signuptoWeb("rishabh", "rishabh@gmail.com", "123456")
+    await SignUp.signuptoWeb("rishabh", "dbrishabh23@gmail.com", "123456")
     await team.createTeamMember();
 
 

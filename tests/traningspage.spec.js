@@ -7,7 +7,7 @@ test('Business Owner should able to create new tranings', async ({ page }) => {
   const SignUp = new signup(page);
 
   await SignUp.gotoSignUp();
-  await SignUp.signuptoWeb("rishabh", "rishabh@gmail.com", "123456");
+  await SignUp.signuptoWeb("rishabh", "dbrishabh22@gmail.com", "123456");
   await Traning.createTranings();
 
 });
